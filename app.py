@@ -31,6 +31,8 @@ try:
 
     gs_client = gspread.authorize(creds)
     sheet = gs_client.open("honda_prices").worksheet("prices")
+    sheet = gs_client.open("test_prices").sheet1
+print(sheet.get_all_records())
 except Exception as e:
     print("❌ Error loading Google Sheet credentials:", e)
     sheet = None  # fallback if sheet can't be loaded
