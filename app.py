@@ -18,7 +18,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # 🔑 Google Sheets Credentials
 gs_creds = Credentials.from_service_account_file(
-    "gen-lang-client-0125688965-836192609206.json",  # << แก้ชื่อไฟล์ให้ตรงกับของคุณ
+    "gen-lang-client-0125688965-63c9e6dfdffd.json",  # << แก้ชื่อไฟล์ให้ตรงกับของคุณ
     scopes=["https://www.googleapis.com/auth/spreadsheets"]
 )
 gs_client = gspread.authorize(gs_creds)
