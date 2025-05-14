@@ -2,29 +2,27 @@ from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
-import openai
+from openai import OpenAI
 import os
 
 app = Flask(__name__)
 
-# ดึง token และ secret จาก environment variables
+# 🔑 โหลดค่า Token จาก Environment
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 @app.route("/")
 def home():
     return "LINE-GPT Bot is running."
 
-# ✅ Route นี้ต้องมี methods=['POST'] เพื่อให้ Webhook ของ LINE ทำงานได้
+# ✅ ต้องรองรับ POST เท่านั้น
 @app.route("/callback", methods=['POST'])
 def callback():
     signature = request.headers.get('X-Line-Signature', '')
     body = request.get_data(as_text=True)
 
-    # Log ดูค่าที่ส่งมาจาก LINE
-    print(">> Signature:", signature)
-    print(">> Body:", body)
+    print(">> Webhook body:", body)
 
     try:
         handler.handle(body, signature)
@@ -32,26 +30,29 @@ def callback():
         print("❌ Signature verification failed.")
         abort(400)
     except Exception as e:
-        print("❌ Unexpected Error:", e)   # 👈 สำคัญมาก
+        print("❌ Unexpected Error:", e)
         abort(500)
 
     return 'OK', 200
 
-# ✅ จัดการข้อความที่เข้ามา
+# ✅ ดักข้อความจากผู้ใช้
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     user_msg = event.message.text
 
-    # เรียก ChatGPT มาตอบ
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",  # หรือ "gpt-4" ถ้ามีสิทธิ์
-        messages=[
-            {"role": "system", "content": "คุณคือฝ่ายขายรถจักรยานยนต์"},
-            {"role": "user", "content": user_msg}
-        ]
-    )
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "คุณคือฝ่ายขายรถจักรยานยนต์ ช่วยแนะนำรถที่เหมาะสมกับลูกค้า และกระตุ้นให้จองรถอย่างสุภาพ"},
+                {"role": "user", "content": user_msg}
+            ]
+        )
+        reply_text = response.choices[0].message.content.strip()
+    except Exception as e:
+        reply_text = "ขออภัยค่ะ ระบบตอบกลับผิดพลาด: " + str(e)
+        print("❌ Error calling OpenAI:", e)
 
-    reply_text = response.choices[0].message.content
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=reply_text)
