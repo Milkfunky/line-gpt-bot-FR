@@ -19,13 +19,21 @@ def home():
 # ✅ Route นี้ต้องมี methods=['POST'] เพื่อให้ Webhook ของ LINE ทำงานได้
 @app.route("/callback", methods=['POST'])
 def callback():
-    signature = request.headers.get('X-Line-Signature')
+    signature = request.headers.get('X-Line-Signature', '')
     body = request.get_data(as_text=True)
+
+    # Log ดูค่าที่ส่งมาจาก LINE
+    print(">> Signature:", signature)
+    print(">> Body:", body)
 
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
+        print("❌ Signature verification failed.")
         abort(400)
+    except Exception as e:
+        print("❌ Unexpected Error:", e)   # 👈 สำคัญมาก
+        abort(500)
 
     return 'OK', 200
 
