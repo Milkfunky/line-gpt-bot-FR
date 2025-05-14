@@ -5,6 +5,7 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage
 from openai import OpenAI
 import gspread
 from google.oauth2.service_account import Credentials
+from langdetect import detect
 import os
 import json
 
@@ -26,17 +27,38 @@ try:
         cred_dict,
         scopes=["https://www.googleapis.com/auth/spreadsheets"]
     )
-
     print("✅ Loaded Google Sheet scopes:", creds.scopes)
 
     gs_client = gspread.authorize(creds)
     sheet = gs_client.open("honda_prices").worksheet("prices")
-
 except Exception as e:
     print("❌ Error loading Google Sheet credentials:", e)
-    sheet = None  # fallback if sheet can't be loaded
+    sheet = None  # fallback
 
-# ✅ ดึงราคาจาก Google Sheet
+# ✅ ภาษา: จดจำภาษาผู้ใช้
+user_language_memory = {}  # user_id → lang_code
+
+def detect_user_language(user_id, message):
+    if user_id not in user_language_memory:
+        try:
+            lang = detect(message)
+            user_language_memory[user_id] = lang
+            print(f"🔤 Detected language for {user_id}: {lang}")
+        except:
+            user_language_memory[user_id] = "th"  # fallback
+    return user_language_memory[user_id]
+
+def get_lang_instruction(lang_code):
+    if lang_code == "th":
+        return "โปรดตอบกลับเป็นภาษาไทย"
+    elif lang_code.startswith("zh"):
+        return "请用中文回复客户。"
+    elif lang_code == "en":
+        return "Please reply in English."
+    else:
+        return "Please respond in the language the customer used."
+
+# ✅ อ่านราคา
 def get_price_from_sheet(model_name):
     if not sheet:
         return "❌ ไม่สามารถโหลดข้อมูลราคาจากระบบได้ในขณะนี้"
@@ -78,20 +100,24 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    user_id = event.source.user_id
     user_msg = event.message.text.strip()
 
-    # ✅ ตรวจสอบว่าผู้ใช้ถามราคา
+    # ตรวจว่าผู้ใช้ถามราคา
     if "ราคา" in user_msg:
         model = user_msg.replace("ราคา", "").strip()
         reply_text = get_price_from_sheet(model)
     else:
+        lang_code = detect_user_language(user_id, user_msg)
+        lang_instruction = get_lang_instruction(lang_code)
+
         try:
             response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {
-  "role": "system",
-  "content": """
+                        "role": "system",
+                        "content": f"""
 คุณคือพนักงานฝ่ายขายของกิจการ "Funky Rider" ซึ่งเป็นผู้จำหน่ายรถจักรยานยนต์ยี่ห้อ Honda (ฮอนด้า) ในจังหวัดเชียงใหม่ ประเทศไทย
 
 - คุณคือพนักงานหญิง อายุ 36 ปี ชื่อเล่นว่า "เอมี่ (Ami)"
@@ -99,17 +125,17 @@ def handle_message(event):
 - เบอร์ติดต่อ: 099-556-6998 หรือ 099-556-6695
 - ลิงก์แผนที่ร้าน: https://maps.app.goo.gl/wXtWY7vpoNDZSTTe7
 
+{lang_instruction}
+
 หน้าที่ของคุณ:
 - ให้คำแนะนำรุ่นรถจักรยานยนต์ Honda ที่เหมาะกับความต้องการของลูกค้า
 - ช่วยลูกค้าเลือกจากงบประมาณ, การใช้งาน เช่น ใช้ในเมือง, ส่งของ, หรือเดินทางไกล
 - ตอบกลับอย่างมืออาชีพ สุภาพ เป็นกันเอง และเข้าใจง่าย
 - ให้ข้อมูลเรื่องราคา/โปรโมชั่น/ช่องทางจอง ทดลองขับ หรือให้เบอร์ติดต่อ
-- ใช้ภาษาที่ลูกค้าใช้ถาม (เช่น ถ้าลูกค้าพิมพ์ภาษาจีน ให้ตอบเป็นภาษาจีน)
-- จดจำภาษาที่ลูกค้าใช้ เพื่อใช้ในการตอบในครั้งถัดไปเสมอ
 
-เว็บไซต์อ้างอิงข้อมูลสินค้า: https://www.thaihonda.co.th/honda/
-"""
-},
+เว็บไซต์อ้างอิง: https://www.thaihonda.co.th/honda/
+                        """
+                    },
                     {"role": "user", "content": user_msg}
                 ]
             )
@@ -122,7 +148,6 @@ def handle_message(event):
             else:
                 reply_text = "เกิดข้อผิดพลาดในการตอบกลับ กรุณาลองใหม่อีกครั้ง"
 
-    # ✅ ส่งข้อความกลับผ่าน LINE
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=reply_text)
