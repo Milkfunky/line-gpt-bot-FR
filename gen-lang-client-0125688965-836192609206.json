@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "gen-lang-client-0125688965",
+  "private_key_id": "836192609206e7dc2181566f1dd58dc97381cc25",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC9+kMT2pVuUMvs\nHTfc1UiqVFVfpeAGKACeU8xle+M+HrNLu3iBvcxlnlOIRoJNJOHhugqilat1NYRc\n+/G1LVp4YroJB3aIJ2ijj1DtNOeAbZ7gv3uQWghDRnhdVh+gIVDjVtham+Q/AiPe\nGLz2k9qqFQrtm1JEC0rpV0YNACnmfbnUw0JScZN8wg1Yk+d09O9thti48JLI6ozc\n/VZwwuii/Wdske1+j0C3sPYxzlObY5rWurEJKH8bu6hdPotU24UE5TA0PBdB5qyF\nFqJu5J1UWc35BZWdR/vahlZYU9LYtlCkiMpOn0qXZtXgTB5vXYKGSToucuZHpFB/\naN1AeK8FAgMBAAECggEAFxVAbzog6/1/OZo3Pmrf4GpM0UlbVgQoRxSRgkcyTkr2\nqB4IP2NrYXGCXs2KaYswsvei8SxUX/J3ucCXFteC5ZvBVPWGLnbzXOQ+BgRmmJE5\nO7+oaNq3pEz8tQKQ5ykFJgpYUXIdopZE+2hwFVnTuNTDtikoLsJcgMus5El/zdSF\nOh3YC0kUka89idfySsUAt/PuLXMnLGNlqjZGqW9kMdjM85VEeRtqIDIo740D3cNt\nl2ELsgMfbrznXHbNrCl6gPq9EBANt9Ncj2CmJWOxvzhvPDrrjP/iH5h5mKMhO8Z9\nAyJmQUyYZhfle2k1vJJtCBVidK4tRPvOyONZIfG5YQKBgQDraDtZBja1OnYZRmij\nzR7SpbfvpHJsOha+YPA3IKDtEBLDYSi+2RBSVvS+2N1NAcPAerk5Ye/ND7bpgeS1\n5DPBhKMAQC3BbYjRGmUoD3M4LRD6N62PJLIzFW7te1IhYeKPpNv0hqZ/b6YTczyK\nnFOlbz5IOLFcSMATjqZzHBym2QKBgQDOmKs0lfmcbQ+BtyP2UKPAe6jHJqVqkTAi\nyn73AgJ9KFgEYcFVBRwRA7hKMiO+NVfcU6Boeiekc9kVnUQ5toJzJY8unAd2Zmph\n96iWkOSMHtLTq2nXuruvAN5nYYAKrgkQMW2WCjwv2uA/Jy30BS9tEU6Rk31BwJ33\n7VC0PEAmDQKBgC08wHrhGM5Gx78fqqgfmNa+BdTFcz+dAhXfpwnQ+VvVBOYK27uh\nFuPb1fh+0DgmKKnqa4G9ckmjxXCmB390tQVxKam4q5JKLEqSmfHS1j9rWaHb5Txm\nvt/WNJTqZ+QGXXVhJuucnI5MtEt0j6PLWr+l2wAh9ONZD6Ayf4YLVu4xAoGBAJtM\nR+YPlsLveGiZsn7Fv1JBom2Rr2acHQMKFMa4zAYo/YDNuvaeEKr5kN61MgkZMCJ+\n+mWO7Z3BN733qgF4IDdOVINE5pcqBW3/LMuBv0tVIEXc5IM16z9x97zendFpYYa6\noRXYO8X9UfQnD3QPMcda6ySjKdTzZcuoqLHTWKVBAoGAa/s+pPjliGeelKjnGcqt\nMIWu2+tBVvapXsCKcaNj7XgQKJiCPsrsN5lG3l3MF1VmBwcUZ+t9At4d+AiXmIEH\n2Crfj3LRVCpHQLiMz2TCWyDgNTh7rWuVNLxjKdlVDe/OO/A/MKQQltwHvAtuW6lN\nM7sRpHUk6kwTICOSADluuSI=\n-----END PRIVATE KEY-----\n",
+  "client_email": "funkyriderhondaprice@gen-lang-client-0125688965.iam.gserviceaccount.com",
+  "client_id": "107248101364103604976",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/funkyriderhondaprice%40gen-lang-client-0125688965.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
