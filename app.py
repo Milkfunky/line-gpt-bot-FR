@@ -19,10 +19,14 @@ handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # ✅ Google Sheet credentials from ENV
+cred_json = os.getenv("GOOGLE_CREDENTIAL_JSON")
 try:
-    cred_json = os.getenv("GOOGLE_CREDENTIAL_JSON")
     cred_dict = json.loads(cred_json)
-
+    print("✅ JSON loaded successfully")
+except Exception as e:
+    print("❌ Error loading JSON:", e)
+   
+try:
     creds = Credentials.from_service_account_info(
         cred_dict,
         scopes=["https://www.googleapis.com/auth/spreadsheets"]
