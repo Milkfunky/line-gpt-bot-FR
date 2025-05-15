@@ -33,8 +33,10 @@ try:
     )
     print("✅ Loaded Google Sheet scopes:", creds.scopes)
 
-    gs_client = gspread.authorize(creds)
-    sheet = gs_client.open("honda_prices").worksheet("prices")
+    client = gspread.authorize(creds)
+    sheet = client.open("honda_prices").worksheet("prices")
+    print(sheet.get_all_records())
+    
 except Exception as e:
     print("❌ Error loading Google Sheet credentials:", e)
     sheet = None  # fallback
