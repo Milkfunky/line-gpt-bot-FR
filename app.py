@@ -35,11 +35,11 @@ try:
 
     # สร้าง client และเปิดสเปรดชีต
     client = gspread.authorize(creds)
-    sheet = client.open("honda_prices2").worksheet("Prices2")
+    sheet = client.open("honda_prices").worksheet("Prices")
 
-    # ดึงข้อมูลทั้งหมดจากแท็บ Prices2
+    # ดึงข้อมูลทั้งหมดจากแท็บ Prices
     rows = sheet.get_all_records()
-    print("✅ ข้อมูลใน Prices2:", rows)
+    print("✅ ข้อมูลใน Prices:", rows)
     
 except Exception as e:
     print("❌ Error loading Google Sheet credentials:", e)
