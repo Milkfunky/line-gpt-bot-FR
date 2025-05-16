@@ -33,9 +33,13 @@ try:
     )
     print("✅ Loaded Google Sheet scopes:", creds.scopes)
 
+    # สร้าง client และเปิดสเปรดชีต
     client = gspread.authorize(creds)
-    sheet = client.open("honda_prices").worksheet("prices")
-    print(sheet.get_all_records())
+    sheet = client.open("honda_prices2").worksheet("Prices2")
+
+    # ดึงข้อมูลทั้งหมดจากแท็บ Prices2
+    rows = sheet.get_all_records()
+    print("✅ ข้อมูลใน Prices2:", rows)
     
 except Exception as e:
     print("❌ Error loading Google Sheet credentials:", e)
