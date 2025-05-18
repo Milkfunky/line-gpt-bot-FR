@@ -2,7 +2,7 @@ from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
-from openai import OpenAI
+import OpenAI
 import gspread
 from google.oauth2.service_account import Credentials
 from langdetect import detect
@@ -16,7 +16,7 @@ line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
 
 # ✅ OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # ✅ Google Sheet credentials from ENV
 cred_json = os.getenv("GOOGLE_CREDENTIAL_JSON")
@@ -122,13 +122,13 @@ def handle_message(event):
         lang_code = detect_user_language(user_id, user_msg)
         lang_instruction = get_lang_instruction(lang_code)
 
-        try:
-            response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {
-                        "role": "system",
-                        "content": f"""
+try:
+    response = openai.ChatCompletion.create(  # ✅ เรียก GPT ด้วยรูปแบบใหม่
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": f"""
 คุณคือพนักงานฝ่ายขายของกิจการ "Funky Rider" ซึ่งเป็นผู้จำหน่ายรถจักรยานยนต์ยี่ห้อ Honda (ฮอนด้า) ในจังหวัดเชียงใหม่ ประเทศไทย
 
 - คุณคือพนักงานหญิง อายุ 36 ปี ชื่อเล่นว่า "เจนนี่ (Jenny)"
@@ -146,19 +146,19 @@ def handle_message(event):
 - ให้ข้อมูลเรื่องราคา/โปรโมชั่น/ช่องทางจอง ทดลองขับ หรือให้เบอร์ติดต่อ
 
 เว็บไซต์อ้างอิง: https://www.thaihonda.co.th/honda/
-                        """
-                    },
-                    {"role": "user", "content": user_msg}
-                ]
-            )
-            reply_text = response.choices[0].message.content.strip()
+                """
+            },
+            {"role": "user", "content": user_msg}
+        ]
+    )
+    reply_text = response.choices[0].message.content.strip()
 
-        except Exception as e:
-            print("❌ Error calling OpenAI:", e)
-            if "insufficient_quota" in str(e):
-                reply_text = "ขออภัยค่ะ ระบบใช้งาน GPT เกินโควต้าที่กำหนด กรุณาติดต่อเจ้าหน้าที่หรือรอสักครู่"
-            else:
-                reply_text = "เกิดข้อผิดพลาดในการตอบกลับ กรุณาลองใหม่อีกครั้ง"
+except Exception as e:
+    print("❌ Error calling OpenAI:", e)
+    if "insufficient_quota" in str(e):
+        reply_text = "ขออภัยค่ะ ระบบใช้งาน GPT เกินโควต้าที่กำหนด กรุณาติดต่อเจ้าหน้าที่หรือรอสักครู่"
+    else:
+        reply_text = "เกิดข้อผิดพลาดในการตอบกลับ กรุณาลองใหม่อีกครั้ง"
 
     line_bot_api.reply_message(
         event.reply_token,
