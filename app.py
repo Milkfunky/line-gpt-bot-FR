@@ -35,7 +35,8 @@ try:
 
     # สร้าง client และเปิดสเปรดชีต
     client = gspread.authorize(creds)
-    sheet = client.open("honda_prices").worksheet("prices")
+    sheet = client.open_by_key("191yAMF0HIGfcg3Lr-V_gKGU0I4Lj1dIixtlbrSqhpos").worksheet("prices")
+    # sheet = client.open("honda_prices").worksheet("prices")
 
     # ดึงข้อมูลทั้งหมดจากแท็บ prices
     rows = sheet.get_all_records()
