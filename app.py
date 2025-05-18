@@ -16,6 +16,8 @@ line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
 
 # ✅ OpenAI API Key
+print("✅ OpenAI library version:", openai.__version__)
+
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # ✅ Google Sheet credentials from ENV
