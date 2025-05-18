@@ -8,6 +8,7 @@ from google.oauth2.service_account import Credentials
 from langdetect import detect
 import os
 import json
+import traceback
 
 app = Flask(__name__)
 
@@ -148,13 +149,14 @@ def handle_message(event):
             )
             reply_text = response.choices[0].message.content.strip()
 
-        except Exception as e:
-            print("❌ Error calling OpenAI:", e)
-            if "insufficient_quota" in str(e):
-                reply_text = "ขออภัยค่ะ ระบบใช้งาน GPT เกินโควต้าที่กำหนด กรุณาติดต่อเจ้าหน้าที่หรือรอสักครู่"
-            else:
-                reply_text = "เกิดข้อผิดพลาดในการตอบกลับ กรุณาลองใหม่อีกครั้ง"
-
+except Exception as e:
+    print("❌ Error calling OpenAI:", e)
+    traceback.print_exc()  # เพิ่มบรรทัดนี้เพื่อดู stack trace
+    if "insufficient_quota" in str(e):
+        reply_text = "ขออภัยค่ะ ระบบใช้งาน GPT เกินโควต้าที่กำหนด กรุณาติดต่อเจ้าหน้าที่หรือรอสักครู่"
+    else:
+        reply_text = f"⚠️ เกิดข้อผิดพลาด: {str(e)}"
+        
     # ส่งกลับผ่าน LINE
     line_bot_api.reply_message(
         event.reply_token,
