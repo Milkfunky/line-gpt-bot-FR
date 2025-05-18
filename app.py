@@ -126,7 +126,7 @@ try:
     response = openai.ChatCompletion.create(
     model="gpt-3.5-turbo",
     messages=[
-        {"role": "system", "content": "
+        {"role": "system", "content": """
         
        คุณคือพนักงานฝ่ายขายของกิจการ "Funky Rider" ซึ่งเป็นผู้จำหน่ายรถจักรยานยนต์ยี่ห้อ Honda (ฮอนด้า) ในจังหวัดเชียงใหม่ ประเทศไทย
         - คุณคือพนักงานหญิง อายุ 36 ปี ชื่อเล่นว่า "เจนนี่ (Jenny)"
@@ -142,7 +142,7 @@ try:
         - ให้ข้อมูลเรื่องราคา/โปรโมชั่น/ช่องทางจอง ทดลองขับ หรือให้เบอร์ติดต่อ
         - เว็บไซต์อ้างอิง: https://www.thaihonda.co.th/honda/
          
-                "},
+                """},
                 {"role": "user", "content": user_msg}
             ]
         )
