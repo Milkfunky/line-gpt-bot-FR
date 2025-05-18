@@ -18,10 +18,9 @@ handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
 
 # ✅ OpenAI API Key
 print("✅ OpenAI library version:", openai.__version__)
-
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# ✅ Google Sheet credentials from ENV
+# ✅ Google Sheet credentials
 cred_json = os.getenv("GOOGLE_CREDENTIAL_JSON")
 try:
     cred_dict = json.loads(cred_json)
@@ -43,7 +42,7 @@ except Exception as e:
     print("❌ Error loading Google Sheet credentials:", e)
     sheet = None
 
-# ✅ จำภาษาของแต่ละ user
+# ✅ ภาษา: จำภาษาของผู้ใช้แต่ละคน
 user_language_memory = {}
 
 def detect_user_language(user_id, message):
@@ -66,7 +65,7 @@ def get_lang_instruction(lang_code):
     else:
         return "Please respond in the language the customer used."
 
-# ✅ อ่านราคาจาก Google Sheet
+# ✅ ดึงราคาจาก Google Sheet
 def get_price_from_sheet(model_name):
     if not sheet:
         return "❌ ไม่สามารถโหลดข้อมูลราคาจากระบบได้ในขณะนี้"
@@ -149,15 +148,14 @@ def handle_message(event):
             )
             reply_text = response.choices[0].message.content.strip()
 
-except Exception as e:
-    print("❌ Error calling OpenAI:", e)
-    traceback.print_exc()  # เพิ่มบรรทัดนี้เพื่อดู stack trace
-    if "insufficient_quota" in str(e):
-        reply_text = "ขออภัยค่ะ ระบบใช้งาน GPT เกินโควต้าที่กำหนด กรุณาติดต่อเจ้าหน้าที่หรือรอสักครู่"
-    else:
-        reply_text = f"⚠️ เกิดข้อผิดพลาด: {str(e)}"
-        
-    # ส่งกลับผ่าน LINE
+        except Exception as e:
+            print("❌ Error calling OpenAI:", e)
+            traceback.print_exc()
+            if "insufficient_quota" in str(e):
+                reply_text = "ขออภัยค่ะ ระบบใช้งาน GPT เกินโควต้าที่กำหนด กรุณาติดต่อเจ้าหน้าที่หรือรอสักครู่"
+            else:
+                reply_text = f"⚠️ เกิดข้อผิดพลาด: {str(e)}"
+
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=reply_text)
