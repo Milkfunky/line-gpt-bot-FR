@@ -16,9 +16,9 @@ app = Flask(__name__)
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
 
-# ✅ OpenAI API Key
+# ✅ OpenAI client (เวอร์ชัน >=1.0.0)
 print("✅ OpenAI library version:", openai.__version__)
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # ✅ Google Sheet credentials
 cred_json = os.getenv("GOOGLE_CREDENTIAL_JSON")
@@ -42,7 +42,7 @@ except Exception as e:
     print("❌ Error loading Google Sheet credentials:", e)
     sheet = None
 
-# ✅ ภาษา: จำภาษาของผู้ใช้แต่ละคน
+# ✅ จำภาษาของผู้ใช้แต่ละคน
 user_language_memory = {}
 
 def detect_user_language(user_id, message):
@@ -119,7 +119,7 @@ def handle_message(event):
         lang_instruction = get_lang_instruction(lang_code)
 
         try:
-            response = openai.ChatCompletion.create(
+            response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {
@@ -156,6 +156,7 @@ def handle_message(event):
             else:
                 reply_text = f"⚠️ เกิดข้อผิดพลาด: {str(e)}"
 
+    # ✅ ตอบกลับผ่าน LINE
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=reply_text)
