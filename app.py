@@ -67,6 +67,21 @@ def get_lang_instruction(lang_code):
     else:
         return "Please respond in the language the customer used."
 
+# ✅ จำรุ่นรถ
+user_context_memory = {}
+
+def set_last_model(user_id, model_name):
+    user_context_memory[user_id] = user_context_memory.get(user_id, {})
+    user_context_memory[user_id]["last_model"] = model_name
+
+def get_last_model(user_id):
+    return user_context_memory.get(user_id, {}).get("last_model")
+
+if "ราคา" in user_msg:
+    model = user_msg.replace("ราคา", "").strip()
+    set_last_model(user_id, model)
+    reply_text = get_price_from_sheet(model)
+
 # ✅ อ่านราคาเฉพาะรุ่น (ถ้ามีคำว่า "ราคา" + ชื่อรุ่น)
 def get_price_from_sheet(model_name):
     if not sheet:
