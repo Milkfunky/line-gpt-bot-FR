@@ -23,6 +23,8 @@ client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 # ✅ Google Sheet credentials
 cred_json = os.getenv("GOOGLE_CREDENTIAL_JSON")
 try:
+    if not cred_json:
+        raise ValueError("Environment variable GOOGLE_CREDENTIAL_JSON is empty")
     cred_dict = json.loads(cred_json)
     print("✅ JSON loaded successfully")
 except Exception as e:
