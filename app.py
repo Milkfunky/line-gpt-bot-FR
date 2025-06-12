@@ -77,6 +77,11 @@ def set_last_model(user_id, model_name):
 def get_last_model(user_id):
     return user_context_memory.get(user_id, {}).get("last_model")
 
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    user_id = event.source.user_id
+    user_msg = event.message.text.strip()
+    
 if "ราคา" in user_msg:
     model = user_msg.replace("ราคา", "").strip()
     set_last_model(user_id, model)
