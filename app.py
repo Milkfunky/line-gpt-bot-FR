@@ -36,7 +36,7 @@ try:
     print("✅ Loaded Google Sheet scopes:", creds.scopes)
 
     gs_client = gspread.authorize(creds)
-    sheet = gs_client.open_by_key("7734e5978e1c9094e1ec012b12c8d6c29ab4a5df").worksheet("prices")
+    sheet = gs_client.open_by_key("191yAMF0HIGfcg3Lr-V_gKGU0I4Lj1dIixtlbrSqhpos").worksheet("prices")
     print("✅ Connected to Google Sheet.")
 except Exception as e:
     print("❌ Error loading Google Sheet credentials:", e)
